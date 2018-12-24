@@ -1,12 +1,43 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDom from 'react-dom';
+import { applyMiddleware, compose, createStore } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import { BrowserRouter, Route} from 'react-router-dom';
+import AuthRoute from './component/authroute/authroute';
+import Login from './component/login/login';
+import Register from './component/register/register.js';
+import reducers from './reducer';
+import './config';
 import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+const store = createStore(reducers, compose(
+    applyMiddleware(thunk),
+    window.devToolsExtention ? window.devToolsExtention() : f=>f
+    //window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : null
+)); 
+// let store = process.env.NODE_ENV === 'production' ? (
+//     createStore(reducers, applyMiddleware(thunk))
+// ) : (
+//     window.__REDUX_DEVTOOLS_EXTENSION__ ? (
+//         createStore(reducers, compose(applyMiddleware(thunk), window.__REDUX_DEVTOOLS_EXTENSION__()))
+//     ) : (
+//         createStore(reducers, applyMiddleware(thunk))
+//     )
+// )
 
-ReactDOM.render(<App />, document.getElementById('root'));
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
+function Boss(){
+    return <h2>boss</h2>
+}
+ReactDom.render(
+    (<Provider  store={store}>
+        <BrowserRouter>
+            <div>
+                <AuthRoute></AuthRoute>
+                <Route path='/boss' component={Boss}></Route>
+                <Route path='/login' component={Login}></Route>
+                <Route path='/register' component={Register}></Route>
+            </div>
+        </BrowserRouter>
+    </Provider>),
+    document.getElementById('root')
+)
